@@ -3,8 +3,10 @@ resource "aws_vpc" "main" {
 
 
   tags = {
-      Managedby = "Terraform"
+      Managedby   = "Terraform"
       Environment = var.environment
       CreatedOn   = timestamp()
+      Module      = "tf_learn_vpc"
+      Project     = "learning"
   }
 }
