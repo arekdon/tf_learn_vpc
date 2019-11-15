@@ -63,3 +63,52 @@ resource "aws_nat_gateway" "ngw" {
 
   depends_on = [aws_internet_gateway.igw,aws_eip.ngweip]
 }
+
+
+// Create public route table
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.default.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+      Managedby   = "Terraform"
+      Environment = var.environment
+      CreatedOn   = timestamp()
+      ChangedOn   = timestamp()
+      Module      = "tf_learn_vpc"
+      Project     = "learning"
+      ResourceType = "RouteTable"
+  }
+}
+
+// Create private route table
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.default.id
+
+  route {
+    cidr_block = aws_eip.ngweip.private_ip
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+      Managedby   = "Terraform"
+      Environment = var.environment
+      CreatedOn   = timestamp()
+      ChangedOn   = timestamp()
+      Module      = "tf_learn_vpc"
+      Project     = "learning"
+      ResourceType = "RouteTable"
+  }
+}
+
+// Create 'dumb' association of RT to public subnets
+resource "aws_route_table_association" "public_assoc" {
+  count          = floor(split(aws_subnet),length(aws_subnet) / 2)
+  subnet_id      = aws_subnet.main.${count.index}.id
+  route_table_id = aws_route_table.public_rt.id
+
+}
