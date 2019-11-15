@@ -52,7 +52,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_eip" "ngweip" {
   vpc      = true
 
-  depends_on = ["aws_internet_gateway.igw"]
+  depends_on = [aws_internet_gateway.igw]
 }
 
 // Create Nat Gateway in first subnet
@@ -61,5 +61,5 @@ resource "aws_nat_gateway" "ngw" {
   allocation_id = aws_eip.ngweip.id
   subnet_id     = aws_subnet.main[0].id
 
-  depends_on = ["aws_internet_gateway.igw","aws_eip.ngweip"]
+  depends_on = [aws_internet_gateway.igw,aws_eip.ngweip]
 }
