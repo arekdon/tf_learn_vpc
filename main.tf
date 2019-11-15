@@ -18,6 +18,7 @@ resource "aws_vpc" "main" {
   }
 }
 
+// Create subnets based on AZs provided as input
 resource "aws_subnet" "main" {
   
   count = length(var.availability_zone_names)
@@ -40,4 +41,25 @@ resource "aws_subnet" "main" {
       tags["CreatedOn"],
     ]
   }
+}
+
+// Create Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+// Create Elastic IP for NAT gw
+resource "aws_eip" "ngweip" {
+  vpc      = true
+
+  depends_on = ["aws_internet_gateway.igw"]
+}
+
+// Create Nat Gateway in first subnet
+// TODO: make this choice somehow intelligent, split into haf of private and half of public subnets
+resource "aws_nat_gateway" "ngw" {
+  allocation_id = aws_eip.ngweip.id
+  subnet_id     = aws_subnet.main.[0].id
+
+  depends_on = ["aws_internet_gateway.igw","aws_eip.ngweip"]
 }
