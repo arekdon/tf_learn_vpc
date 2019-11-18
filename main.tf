@@ -97,13 +97,14 @@ resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-      Managedby   = "Terraform"
-      Environment = var.environment
-      CreatedOn   = timestamp()
-      ChangedOn   = timestamp()
-      Module      = "tf_learn_vpc"
-      Project     = "learning"
-      ResourceType = "RouteTable"
+      Managedby     = "Terraform"
+      Environment   = var.environment
+      CreatedOn     = timestamp()
+      ChangedOn     = timestamp()
+      Module        = "tf_learn_vpc"
+      Project       = "learning"
+      ResourceType  = "RouteTable"
+      Name          = "PublicRT"
   }
 }
 
@@ -142,6 +143,7 @@ resource "aws_route_table_association" "public_association" {
   count          = length(var.public_subnets_cidr_block)
   subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public_rt.id
+  gateway_id     = aws_internet_gateway.igw.id
 
 }
 
@@ -150,5 +152,5 @@ resource "aws_route_table_association" "private_association" {
   count          = length(var.private_subnets_cidr_block)
   subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_rt.id
-
+  nat_gateway_id = aws_nat_gateway.ngw.id
 }
