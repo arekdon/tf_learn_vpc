@@ -135,7 +135,7 @@ resource "aws_route" "public_routes" {
 // Private RT routes
 resource "aws_route" "private_routes" {
   route_table_id            = aws_route_table.private_rt.id
-  destination_cidr_block    = join("",[aws_eip.ngweip.private_ip,"/32"])
+  destination_cidr_block    = "0.0.0.0/0"
   nat_gateway_id            = aws_nat_gateway.ngw.id
   depends_on                = [aws_route_table.private_rt,aws_eip.ngweip]
 }
