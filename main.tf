@@ -128,6 +128,7 @@ resource "aws_route_table" "private_rt" {
 resource "aws_route" "public_routes" {
   route_table_id            = aws_route_table.public_rt.id
   destination_cidr_block    = "0.0.0.0/0"
+  gateway_id                = aws_internet_gateway.igw.id
   depends_on                = [aws_route_table.public_rt,aws_internet_gateway.igw]
 }
 
@@ -135,6 +136,7 @@ resource "aws_route" "public_routes" {
 resource "aws_route" "private_routes" {
   route_table_id            = aws_route_table.private_rt.id
   destination_cidr_block    = aws_eip.ngweip.private_ip
+  nat_gateway_id            = aws_nat_gateway.ngw.id
   depends_on                = [aws_route_table.private_rt,aws_eip.ngweip]
 }
 
@@ -143,8 +145,6 @@ resource "aws_route_table_association" "public_association" {
   count          = length(var.public_subnets_cidr_block)
   subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public_rt.id
-  gateway_id     = aws_internet_gateway.igw.id
-
 }
 
 // Create association of RT to private subnets
@@ -152,5 +152,4 @@ resource "aws_route_table_association" "private_association" {
   count          = length(var.private_subnets_cidr_block)
   subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_rt.id
-  nat_gateway_id = aws_nat_gateway.ngw.id
 }
