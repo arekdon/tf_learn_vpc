@@ -18,12 +18,39 @@ resource "aws_vpc" "main" {
   }
 }
 
-// Create subnets based on AZs provided as input
-resource "aws_subnet" "main" {
+// Create public subnets
+// TODO: Protection AZs = public_subnets length
+resource "aws_subnet" "public_subnets" {
   
-  count = length(var.availability_zone_names)
+  count = length(var.public_subnets_cidr_block)
   vpc_id     = aws_vpc.main.id
-  cidr_block = cidrsubnet(var.cidr_block,length(var.availability_zone_names),count.index)
+  cidr_block = var.public_subnets_cidr_block[count.index]
+  availability_zone = var.availability_zone_names[count.index]
+
+  tags = {
+      Managedby   = "Terraform"
+      Environment = var.environment
+      CreatedOn   = timestamp()
+      ChangedOn   = timestamp()
+      Module      = "tf_learn_vpc"
+      Project     = "learning"
+      ResourceType = "Subnet"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags["CreatedOn"],
+    ]
+  }
+}
+
+// Create private subnets
+// TODO: Protection AZs = private_subnets length
+resource "aws_subnet" "private_subnets" {
+  
+  count = length(var.private_subnets_cidr_block)
+  vpc_id     = aws_vpc.main.id
+  cidr_block = var.private_subnets_cidr_block[count.index]
   availability_zone = var.availability_zone_names[count.index]
 
   tags = {
@@ -105,10 +132,10 @@ resource "aws_route_table" "private_rt" {
   }
 }
 
-// Create 'dumb' association of RT to public subnets
-resource "aws_route_table_association" "public_assoc" {
-  count          = floor(split(aws_subnet),length(aws_subnet) / 2)
-  subnet_id      = aws_subnet.main.${count.index}.id
-  route_table_id = aws_route_table.public_rt.id
+# // Create 'dumb' association of RT to public subnets
+# resource "aws_route_table_association" "public_assoc" {
+#   count          = floor(split(aws_subnet),length(aws_subnet) / 2)
+#   subnet_id      = aws_subnet.main.${count.index}.id
+#   route_table_id = aws_route_table.public_rt.id
 
-}
+# }
