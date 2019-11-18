@@ -94,7 +94,7 @@ resource "aws_nat_gateway" "ngw" {
 
 // Create public route table
 resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.default.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -114,7 +114,7 @@ resource "aws_route_table" "public_rt" {
 
 // Create private route table
 resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.default.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = aws_eip.ngweip.private_ip
