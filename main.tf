@@ -96,11 +96,6 @@ resource "aws_nat_gateway" "ngw" {
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
   tags = {
       Managedby   = "Terraform"
       Environment = var.environment
@@ -116,26 +111,44 @@ resource "aws_route_table" "public_rt" {
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = aws_eip.ngweip.private_ip
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
   tags = {
-      Managedby   = "Terraform"
-      Environment = var.environment
-      CreatedOn   = timestamp()
-      ChangedOn   = timestamp()
-      Module      = "tf_learn_vpc"
-      Project     = "learning"
-      ResourceType = "RouteTable"
+      Managedby     = "Terraform"
+      Environment   = var.environment
+      CreatedOn     = timestamp()
+      ChangedOn     = timestamp()
+      Module        = "tf_learn_vpc"
+      Project       = "learning"
+      ResourceType  = "RouteTable"
+      Name          = "PrivateRT"
   }
 }
 
-# // Create 'dumb' association of RT to public subnets
-# resource "aws_route_table_association" "public_assoc" {
-#   count          = floor(split(aws_subnet),length(aws_subnet) / 2)
-#   subnet_id      = aws_subnet.main.${count.index}.id
-#   route_table_id = aws_route_table.public_rt.id
+// Public RT routes
+resource "aws_route" "public_routes" {
+  route_table_id            = aws_route_table.public_rt.id
+  destination_cidr_block    = "0.0.0.0/0"
+  depends_on                = ["aws_route_table.public_rt","aws_internet_gateway.igw"]
+}
 
-# }
+// Private RT routes
+resource "aws_route" "private_routes" {
+  route_table_id            = aws_route_table.private_rt.id
+  destination_cidr_block    = aws_eip.ngweip.private_ip
+  depends_on                = ["aws_route_table.private_rt","aws_eip.ngweip"],
+}
+
+// Create association of RT to public subnets
+resource "aws_route_table_association" "public_association" {
+  count          = length(var.public_subnets_cidr_block)
+  subnet_id      = aws_subnet.public_subnets.${count.index}.id
+  route_table_id = aws_route_table.public_rt.id
+
+}
+
+// Create association of RT to private subnets
+resource "aws_route_table_association" "public_association" {
+  count          = length(var.private_subnets_cidr_block)
+  subnet_id      = aws_subnet.private_subnets.${count.index}.id
+  route_table_id = aws_route_table.private_rt.id
+
+}
