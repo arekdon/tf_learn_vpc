@@ -158,7 +158,7 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private_rt.id
 }
 
-//Standard NACL
+//Standard NACL for Public Subnet
 resource "aws_network_acl" "public_subnets_nacl" {
   vpc_id = aws_vpc.main.id
 
@@ -199,6 +199,90 @@ resource "aws_network_acl" "public_subnets_nacl" {
   }
 
   tags = {
-    Name = "main"
+    Managedby     = "Terraform"
+    Environment   = var.environment
+    CreatedOn     = timestamp()
+    ChangedOn     = timestamp()
+    Module        = "tf_learn_vpc"
+    Project       = "learning"
+    ResourceType  = "NACL"
+    Name          = "PublicNACL"
+  }
+}
+
+//Standard NACL for Public Subnet
+resource "aws_network_acl" "public_subnets_nacl" {
+  vpc_id = aws_vpc.main.id
+
+// Standard ranges as recommended by AWS
+// https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
+// Management ports 22 and 3389
+// Ephemeral Range 32768 - 65535
+
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 22
+    to_port    = 22
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 22
+    to_port    = 22
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 300
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 32768
+    to_port    = 65535
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 3389
+    to_port    = 3389
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 3389
+    to_port    = 3389
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 300
+    action     = "allow"
+    cidr_block = var.cidr_block
+    from_port  = 32768
+    to_port    = 65535
+  }
+
+
+  tags = {
+    Managedby     = "Terraform"
+    Environment   = var.environment
+    CreatedOn     = timestamp()
+    ChangedOn     = timestamp()
+    Module        = "tf_learn_vpc"
+    Project       = "learning"
+    ResourceType  = "NACL"
+    Name          = "PublicNACL"
   }
 }
