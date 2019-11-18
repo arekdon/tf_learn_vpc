@@ -127,14 +127,14 @@ resource "aws_route_table" "private_rt" {
 resource "aws_route" "public_routes" {
   route_table_id            = aws_route_table.public_rt.id
   destination_cidr_block    = "0.0.0.0/0"
-  depends_on                = ["aws_route_table.public_rt","aws_internet_gateway.igw"]
+  depends_on                = [aws_route_table.public_rt,aws_internet_gateway.igw]
 }
 
 // Private RT routes
 resource "aws_route" "private_routes" {
   route_table_id            = aws_route_table.private_rt.id
   destination_cidr_block    = aws_eip.ngweip.private_ip
-  depends_on                = ["aws_route_table.private_rt","aws_eip.ngweip"]
+  depends_on                = [aws_route_table.private_rt,aws_eip.ngweip]
 }
 
 // Create association of RT to public subnets
@@ -146,7 +146,7 @@ resource "aws_route_table_association" "public_association" {
 }
 
 // Create association of RT to private subnets
-resource "aws_route_table_association" "public_association" {
+resource "aws_route_table_association" "private_association" {
   count          = length(var.private_subnets_cidr_block)
   subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_rt.id
