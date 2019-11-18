@@ -86,7 +86,7 @@ resource "aws_eip" "ngweip" {
 // TODO: make this choice somehow intelligent, split into haf of private and half of public subnets
 resource "aws_nat_gateway" "ngw" {
   allocation_id = aws_eip.ngweip.id
-  subnet_id     = aws_subnet.main[0].id
+  subnet_id     = aws_subnet.public_subnets[0].id
 
   depends_on = [aws_internet_gateway.igw,aws_eip.ngweip]
 }
