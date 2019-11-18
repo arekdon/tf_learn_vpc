@@ -231,7 +231,7 @@ resource "aws_network_acl" "private_subnets_nacl" {
     Module        = "tf_learn_vpc"
     Project       = "learning"
     ResourceType  = "NACL"
-    Name          = "PublicNACL"
+    Name          = "PrivateNACL"
   }
 }
 
