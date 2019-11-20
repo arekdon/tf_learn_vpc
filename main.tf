@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
       ChangedOn   = timestamp()
       Module      = "tf_learn_vpc"
       Project     = "learning"
-      Name        = VPC-${var.environment}
+      Name        = "VPC-${var.environment}"
   }
 
   lifecycle {
@@ -36,7 +36,7 @@ resource "aws_subnet" "public_subnets" {
       Module      = "tf_learn_vpc"
       Project     = "learning"
       ResourceType = "Subnet"
-      Name         = Public-Subnet-${count.index}
+      Name         = "Public-Subnet-${count.index}"
   }
 
   lifecycle {
