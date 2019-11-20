@@ -17,3 +17,7 @@ output "aws_enable_dns_hostnames" {
 output "aws_main_route_table_id" {
   value = aws_vpc.main.main_route_table_id
 }
+
+output "aws_db_subnet_group" {
+  value = aws_db_subnet_group.dbmain.arn
+}

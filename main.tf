@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
       ChangedOn   = timestamp()
       Module      = "tf_learn_vpc"
       Project     = "learning"
-      Name        = "VPC-${var.environment}"
+      Name        = VPC-${var.environment}
   }
 
   lifecycle {
@@ -36,8 +36,7 @@ resource "aws_subnet" "public_subnets" {
       Module      = "tf_learn_vpc"
       Project     = "learning"
       ResourceType = "Subnet"
-      Name         = "Public-Subnet-${count.index}"
-
+      Name         = Public-Subnet-${count.index}
   }
 
   lifecycle {
@@ -349,4 +348,19 @@ resource "aws_iam_role_policy" "example" {
   ]
 }
 EOF
+}
+
+// Get list of subnet ids, for private subnet only
+data "aws_subnet_ids" "private" {
+  vpc_id   = aws_vpc.main.id
+  tags = {
+    Name   = "Private*"
+  }
+}
+
+//Create db subnet group
+resource "aws_db_subnet_group" "dbmain" {
+  
+  subnet_ids = data.aws_subnet_ids.private.ids
+
 }
