@@ -21,3 +21,7 @@ output "aws_main_route_table_id" {
 output "aws_db_subnet_group" {
   value = aws_db_subnet_group.dbmain.arn
 }
+
+output "aws_subnet_id" {
+  value = aws_subnet.private_subnets.id
+}
