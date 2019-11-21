@@ -22,6 +22,6 @@ output "aws_db_subnet_group" {
   value = aws_db_subnet_group.dbmain.arn
 }
 
-output "aws_subnet_id" {
-  value = aws_subnet.private_subnets.id
+output "aws_subnet_ids" {
+  value = aws_subnet.private_subnets[*].id
 }
