@@ -363,4 +363,6 @@ resource "aws_db_subnet_group" "dbmain" {
   
   subnet_ids = data.aws_subnet_ids.private.ids
 
+depends_on = [aws_subnet.private_subnets]
+
 }
