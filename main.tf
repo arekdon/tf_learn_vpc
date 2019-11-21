@@ -356,6 +356,9 @@ data "aws_subnet_ids" "private" {
   tags = {
     Name   = "Private*"
   }
+
+depends_on = [aws_subnet.private_subnets]
+
 }
 
 //Create db subnet group
