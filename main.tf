@@ -295,19 +295,19 @@ resource "aws_network_acl" "public_subnets_nacl" {
 
 // Enable Flowlogs
 
-resource "aws_flow_log" "example" {
+resource "aws_flow_log" "flowlog" {
   iam_role_arn    = aws_iam_role.example.arn
   log_destination = aws_cloudwatch_log_group.example.arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.main.id
 }
 
-resource "aws_cloudwatch_log_group" "example" {
-  name = "example"
+resource "aws_cloudwatch_log_group" "flowlog" {
+  name = "flowlog"
 }
 
-resource "aws_iam_role" "example" {
-  name = "example"
+resource "aws_iam_role" "flowlog" {
+  name = "flowlog"
 
   assume_role_policy = <<EOF
 {
@@ -326,8 +326,8 @@ resource "aws_iam_role" "example" {
 EOF
 }
 
-resource "aws_iam_role_policy" "example" {
-  name = "example"
+resource "aws_iam_role_policy" "flowlog" {
+  name = "flowlog"
   role = aws_iam_role.example.id
 
   policy = <<EOF
