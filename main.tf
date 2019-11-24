@@ -255,7 +255,7 @@ resource "aws_network_acl" "public_subnets_nacl" {
 
   ingress {
     protocol   = "tcp"
-    rule_no    = 100
+    rule_no    = 300
     action     = "allow"
     cidr_block = var.cidr_block
     from_port  = 8080
@@ -302,7 +302,7 @@ resource "aws_network_acl" "public_subnets_nacl" {
 
   egress {
     protocol   = "tcp"
-    rule_no    = 100
+    rule_no    = 300
     action     = "allow"
     cidr_block = var.cidr_block
     from_port  = 8080
