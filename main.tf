@@ -248,34 +248,34 @@ resource "aws_network_acl" "public_subnets_nacl" {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
-    cidr_block = var.cidr_block
+    cidr_block = "0.0.0.0/0"
     from_port  = 80
     to_port    = 80
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
   }
 
   ingress {
     protocol   = "tcp"
     rule_no    = 300
     action     = "allow"
-    cidr_block = var.cidr_block
+    cidr_block = "0.0.0.0/0"
     from_port  = 8080
     to_port    = 8080
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = var.cidr_block
-    from_port  = 443
-    to_port    = 443
   }
 
   egress {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
-    cidr_block = var.cidr_block
+    cidr_block = "0.0.0.0/0"
     from_port  = 80
     to_port    = 80
   }
@@ -284,10 +284,19 @@ resource "aws_network_acl" "public_subnets_nacl" {
     protocol   = "tcp"
     rule_no    = 200
     action     = "allow"
-    cidr_block = var.cidr_block
+    cidr_block = "0.0.0.0/0"
     from_port  = 443
     to_port    = 443
   }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 300
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 8080
+    to_port    = 8080
+  } 
 
   tags = {
     Managedby     = "Terraform"
@@ -299,15 +308,6 @@ resource "aws_network_acl" "public_subnets_nacl" {
     ResourceType  = "NACL"
     Name          = "PublicNACL"
   }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 300
-    action     = "allow"
-    cidr_block = var.cidr_block
-    from_port  = 8080
-    to_port    = 8080
-  }  
 }
 
 
